@@ -1,5 +1,7 @@
 ![Description of GIF](https://github.com/impara/react-native-chat-app/blob/main/Animation.gif)
 
+*Click on the GIF to view it in higher quality.*
+
 Specification for React native Chat App using Typescript
 
 Overview:
