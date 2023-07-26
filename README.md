@@ -1,3 +1,5 @@
+![Description of GIF](https://drive.google.com/file/d/1Ly9Q922pvYuQDSdb-rWs1JqS-gCBkYR2/view?usp=sharing)
+
 Specification for React native Chat App using Typescript
 
 Overview:
