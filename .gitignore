@@ -1,0 +1,80 @@
+# OSX
+#
+.DS_Store
+
+# Misc
+.env
+.env.*
+
+# Xcode
+#
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+ios/.xcode.env.local
+
+# Android/IntelliJ
+#
+android/
+gradle/
+.gradle/
+build.gradle
+gradlew
+gradlew.bat
+local.properties
+.watchmanconfig
+.idea/
+__tests__
+# node.js
+#
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log*
+npm-debug.log*
+yarn.lock
+package-lock.json
+
+# fastlane
+#
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output
+
+# Bundle artifact
+*.jsbundle
+
+# Ruby / CocoaPods
+ios/
+
+# Temporary files created by Metro to check the health of the file watcher
+.metro-health-check*
+
+# testing
+/coverage
+
+# Jest
+.jest/
+
+# Logs
+logs
+
+# Editor directories and files
+.vscode/
+.history/
+
+# Bundler
+.bundle/
