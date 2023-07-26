@@ -11,8 +11,9 @@ import {
   limitToLast,
   update,
 } from '@firebase/database';
-
+import NotificationService from '../services/NotificationService';
 import firebaseInstance from './Firebase';
+import {Alert} from 'react-native';
 
 type ChatRoom = {
   id: string;
@@ -107,16 +108,20 @@ export const setupMessageListener = (
     firebaseInstance.database,
     `chatRooms/${roomId}/messages`,
   ) as Query;
+
   // Listen for new messages
   const handleNewMessage = (snapshot: any) => {
     const message = snapshot.val();
     setMessages((prevMessages: Message[]) => {
-      // Check if the message already exists in the state
-      if (prevMessages.find(msg => msg.id === snapshot.key)) {
-        // If the message already exists, return the previous state
-        return prevMessages;
-      } else {
+      if (!prevMessages.find(msg => msg.id === snapshot.key)) {
         // If the message doesn't exist, append it to the state
+        // And send a push notification
+        NotificationService.sendPushNotification(
+          message.text,
+          roomId,
+          snapshot.key,
+        );
+
         return [
           ...prevMessages,
           {
@@ -128,6 +133,9 @@ export const setupMessageListener = (
             imageMessageURL: message.imageMessageURL,
           },
         ];
+      } else {
+        // If the message already exists, return the previous state
+        return prevMessages;
       }
     });
   };
@@ -147,6 +155,13 @@ export const sendMessage = async (
   imageMessageURL: string = '',
 ): Promise<void> => {
   try {
+    const hasPermission =
+      await NotificationService.askForNotificationPermission();
+    if (!hasPermission) {
+      Alert.alert('Please enable notifications to send a message');
+      return;
+    }
+
     const currentUser = firebaseInstance.auth.currentUser;
     if (!currentUser || !currentUser.displayName) {
       throw new Error(
