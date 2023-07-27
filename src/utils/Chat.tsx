@@ -10,6 +10,7 @@ import {
   orderByChild,
   limitToLast,
   update,
+  endAt,
 } from '@firebase/database';
 import NotificationService from '../services/NotificationService';
 import firebaseInstance from './Firebase';
@@ -32,9 +33,11 @@ type Message = {
   imageMessageURL?: string;
 };
 
+const databaseRef = firebaseInstance.database;
+
 export const fetchChatRooms = async (): Promise<ChatRoom[]> => {
   try {
-    const chatRoomsRef = ref(firebaseInstance.database, 'chatRooms');
+    const chatRoomsRef = ref(databaseRef, 'chatRooms');
     const snapshot = await get(chatRoomsRef);
     const chatRooms: ChatRoom[] = [];
 
@@ -62,20 +65,31 @@ export const fetchChatRooms = async (): Promise<ChatRoom[]> => {
   }
 };
 
+let lastLoadedMessage: string | null = null;
+
 export const fetchMessages = async (
   roomId: string,
   limit: number = 50,
 ): Promise<Message[]> => {
   try {
-    const messagesRef = ref(
-      firebaseInstance.database,
-      `chatRooms/${roomId}/messages`,
-    );
-    const messagesQuery = query(
-      messagesRef,
-      orderByChild('date'),
-      limitToLast(limit),
-    );
+    const messagesRef = ref(databaseRef, `chatRooms/${roomId}/messages`);
+
+    let messagesQuery;
+    if (lastLoadedMessage) {
+      messagesQuery = query(
+        messagesRef,
+        orderByChild('date'),
+        endAt(lastLoadedMessage),
+        limitToLast(limit),
+      );
+    } else {
+      messagesQuery = query(
+        messagesRef,
+        orderByChild('date'),
+        limitToLast(limit),
+      );
+    }
+
     const snapshot = await get(messagesQuery);
     const messages: Message[] = [];
 
@@ -89,6 +103,9 @@ export const fetchMessages = async (
         senderPhotoURL: message.senderPhotoURL,
         imageMessageURL: message.imageMessageURL,
       });
+
+      // Remember the last loaded message's key
+      lastLoadedMessage = childSnapshot.key;
     });
 
     return messages;
@@ -104,10 +121,7 @@ export const setupMessageListener = (
   roomId: string,
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
 ): Unsubscribe => {
-  const messagesRef = ref(
-    firebaseInstance.database,
-    `chatRooms/${roomId}/messages`,
-  ) as Query;
+  const messagesRef = ref(databaseRef, `chatRooms/${roomId}/messages`) as Query;
 
   // Listen for new messages
   const handleNewMessage = (snapshot: any) => {
@@ -169,10 +183,7 @@ export const sendMessage = async (
       );
     }
 
-    const messagesRef = ref(
-      firebaseInstance.database,
-      `chatRooms/${roomId}/messages`,
-    );
+    const messagesRef = ref(databaseRef, `chatRooms/${roomId}/messages`);
     const newMessageRef = push(messagesRef);
     const timestamp = Date.now();
 
@@ -185,7 +196,7 @@ export const sendMessage = async (
     });
 
     // Update the timestamp of the latest message in the chat room
-    const chatRoomRef = ref(firebaseInstance.database, `chatRooms/${roomId}`);
+    const chatRoomRef = ref(databaseRef, `chatRooms/${roomId}`);
     await update(chatRoomRef, {
       latestMessageTimestamp: timestamp,
     });
