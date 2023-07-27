@@ -163,68 +163,65 @@ const ChatRoomListScreen: React.FC<Props> = ({navigation}) => {
   });
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.view}
-      refreshControl={
-        <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-      }>
-      <View style={styles.view}>
-        <View>
-          {isLoading ? (
-            <ActivityIndicator size="large" />
-          ) : chatRooms.length > 0 ? (
-            chatRooms.map((room, i) => (
-              <ListItem key={i} bottomDivider onPress={() => handlePress(room)}>
-                <Avatar
-                  source={
-                    room.latestMessage?.senderPhotoURL
-                      ? {uri: room.latestMessage.senderPhotoURL}
-                      : require('../assets/default-avatar.png') // You can provide a default avatar image here
-                  }
-                  size="medium"
-                  rounded
-                />
-                <ListItem.Content>
-                  <ListItem.Title>{room.name}</ListItem.Title>
-                  <ListItem.Subtitle>{room.description}</ListItem.Subtitle>
-                  {room.latestMessage && (
-                    <View>
-                      <Text>{room.latestMessage.text}</Text>
-                      <Text>{formatDate(room.latestMessage.date)}</Text>
-                    </View>
-                  )}
-                </ListItem.Content>
-                <Icon name="chevron-right" size={15} style={styles.moreIcon} />
-              </ListItem>
-            ))
-          ) : (
-            <Text>No chat rooms available</Text>
-          )}
-        </View>
-        <View>
-          <Button title="Create Room" onPress={() => setIsModalVisible(true)} />
-          <Button title="Logout" onPress={handleLogout} />
-        </View>
-        <Modal visible={isModalVisible} animationType="slide">
-          <View style={styles.modalView}>
-            <TextInput
-              style={styles.input}
-              placeholder="Room Name"
-              value={newRoomName}
-              onChangeText={setNewRoomName}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Room Description"
-              value={newRoomDescription}
-              onChangeText={setNewRoomDescription}
-            />
-            <Button title="Create Room" onPress={handleCreateRoom} />
-            <Button title="Cancel" onPress={() => setIsModalVisible(false)} />
-          </View>
-        </Modal>
+    <View style={styles.view}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+        }>
+        {isLoading ? (
+          <ActivityIndicator size="large" />
+        ) : chatRooms.length > 0 ? (
+          chatRooms.map((room, i) => (
+            <ListItem key={i} bottomDivider onPress={() => handlePress(room)}>
+              <Avatar
+                source={
+                  room.latestMessage?.senderPhotoURL
+                    ? {uri: room.latestMessage.senderPhotoURL}
+                    : require('../assets/default-avatar.png') // You can provide a default avatar image here
+                }
+                size="medium"
+                rounded
+              />
+              <ListItem.Content>
+                <ListItem.Title>{room.name}</ListItem.Title>
+                <ListItem.Subtitle>{room.description}</ListItem.Subtitle>
+                {room.latestMessage && (
+                  <View>
+                    <Text>{room.latestMessage.text}</Text>
+                    <Text>{formatDate(room.latestMessage.date)}</Text>
+                  </View>
+                )}
+              </ListItem.Content>
+              <Icon name="chevron-right" size={15} style={styles.moreIcon} />
+            </ListItem>
+          ))
+        ) : (
+          <Text>No chat rooms available</Text>
+        )}
+      </ScrollView>
+      <View>
+        <Button title="Create Room" onPress={() => setIsModalVisible(true)} />
+        <Button title="Logout" onPress={handleLogout} />
       </View>
-    </ScrollView>
+      <Modal visible={isModalVisible} animationType="slide">
+        <View style={styles.modalView}>
+          <TextInput
+            style={styles.input}
+            placeholder="Room Name"
+            value={newRoomName}
+            onChangeText={setNewRoomName}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Room Description"
+            value={newRoomDescription}
+            onChangeText={setNewRoomDescription}
+          />
+          <Button title="Create Room" onPress={handleCreateRoom} />
+          <Button title="Cancel" onPress={() => setIsModalVisible(false)} />
+        </View>
+      </Modal>
+    </View>
   );
 };
 
