@@ -11,7 +11,7 @@ import {
   Modal,
 } from 'react-native';
 import {ListItem, Avatar} from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {StackNavigatorParams} from '../../App';
 import {fetchChatRooms} from '../utils/Chat';
