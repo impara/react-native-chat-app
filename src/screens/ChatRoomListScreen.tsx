@@ -10,7 +10,7 @@ import {
   RefreshControl,
   Modal,
 } from 'react-native';
-import {ListItem} from 'react-native-elements';
+import {ListItem, Avatar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {StackNavigatorParams} from '../../App';
@@ -139,7 +139,6 @@ const ChatRoomListScreen: React.FC<Props> = ({navigation}) => {
   };
 
   const styles = StyleSheet.create({
-    // Define styles here (if applicable)
     view: {
       flex: 1,
       justifyContent: 'space-between',
@@ -176,6 +175,15 @@ const ChatRoomListScreen: React.FC<Props> = ({navigation}) => {
           ) : chatRooms.length > 0 ? (
             chatRooms.map((room, i) => (
               <ListItem key={i} bottomDivider onPress={() => handlePress(room)}>
+                <Avatar
+                  source={
+                    room.latestMessage?.senderPhotoURL
+                      ? {uri: room.latestMessage.senderPhotoURL}
+                      : require('../assets/default-avatar.png') // You can provide a default avatar image here
+                  }
+                  size="medium"
+                  rounded
+                />
                 <ListItem.Content>
                   <ListItem.Title>{room.name}</ListItem.Title>
                   <ListItem.Subtitle>{room.description}</ListItem.Subtitle>
