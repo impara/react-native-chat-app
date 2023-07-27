@@ -149,7 +149,6 @@ const ChatRoomScreen: React.FC<Props> = ({route}) => {
     if (newMessage.trim().length === 0) {
       return;
     }
-
     try {
       setLoading(true);
       await sendMessage(route.params.roomId, newMessage, user?.photoURL || '');
@@ -221,6 +220,7 @@ const ChatRoomScreen: React.FC<Props> = ({route}) => {
           style={styles.input}
           value={newMessage}
           onChangeText={text => setNewMessage(text)}
+          onSubmitEditing={handleSend}
         />
         <Button title="Send" onPress={handleSend} disabled={loading} />
         <ImageUploadService roomId={route.params.roomId} />
