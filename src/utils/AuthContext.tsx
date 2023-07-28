@@ -6,6 +6,7 @@ import React, {
   ReactNode,
 } from 'react';
 import firebaseInstance from './Firebase'; // Adjust the path based on your project structure
+import {FirebaseError} from '@firebase/util';
 import {
   getAuth,
   signInWithCredential,
@@ -60,17 +61,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
     }
   };
 
-  const loginWithGoogle = async (idToken: string) => {
+  const loginWithGoogle = async (idToken: string): Promise<void> => {
     console.log('Attempting to log in with Google...');
+    const auth = getAuth();
     try {
       const credential = GoogleAuthProvider.credential(idToken);
-      const auth = getAuth();
-      const userCredential = await signInWithCredential(auth, credential);
-      if (userCredential.user) {
-        console.log('Logged in user:', userCredential.user); // Log the logged-in user
-      }
+      await signInWithCredential(auth, credential);
     } catch (error) {
-      console.log('Google login error:', error);
+      if (error instanceof FirebaseError) {
+        // Check if error is an instance of FirebaseError
+        console.log('Google login error:', error.message);
+        if (error.code === 'auth/invalid-credential') {
+          console.log('Token is stale, refreshing...');
+          if (auth.currentUser) {
+            const newToken = await auth.currentUser.getIdToken(true);
+            return loginWithGoogle(newToken);
+          }
+        }
+      }
     }
   };
 
