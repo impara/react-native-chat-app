@@ -45,7 +45,7 @@ const SocialLogin = () => {
 
       // Navigate to the next screen after successful login
       navigation.navigate('ChatRooms');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Facebook login error:', error);
       // Handle the error gracefully and display a user-friendly message
       Alert.alert('Error', error.message);
@@ -68,8 +68,9 @@ const SocialLogin = () => {
 
       // Navigate to Chat Rooms screen after successful login
       navigation.navigate('ChatRooms');
-    } catch (error) {
-      console.log('Google Sign-In error:', error);
+    } catch (error: any) {
+      // Cast error to any
+      console.log('Google Sign-In error:', error.message);
       // Handle the error gracefully and display a user-friendly message
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         Alert.alert('Error', 'User cancelled the login process');

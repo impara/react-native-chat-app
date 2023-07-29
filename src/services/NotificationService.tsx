@@ -1,5 +1,4 @@
 import PushNotification, {
-  PushNotificationObject,
   ReceivedNotification,
 } from 'react-native-push-notification';
 import {Platform} from 'react-native';
