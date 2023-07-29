@@ -19,7 +19,10 @@ const SplashScreen: React.FC<Props> = ({navigation}) => {
   useEffect(() => {
     const splashTimeout = setTimeout(() => {
       if (user) {
-        navigation.replace('ChatRooms');
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'ChatRooms'}],
+        });
       } else {
         navigation.replace('Login');
       }
